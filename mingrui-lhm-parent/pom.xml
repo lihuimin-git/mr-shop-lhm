@@ -12,6 +12,8 @@
         <module>mingrui-lhm-commoms</module>
         <module>mingrui-lhm-service</module>
         <module>mingrui-lhm-service-api</module>
+        <module>mingrui-lhm-service-api-xxx</module>
+        <module>mingrui-lhm-basic-zuul-server</module>
     </modules>
 
     <!--父级项目不需要打包所有packging的类型为pom-->

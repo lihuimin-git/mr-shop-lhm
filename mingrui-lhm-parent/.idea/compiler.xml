@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="CompilerConfiguration">
+    <annotationProcessing>
+      <profile name="Maven default annotation processors profile" enabled="true">
+        <sourceOutputDir name="target/generated-sources/annotations" />
+        <sourceTestOutputDir name="target/generated-test-sources/test-annotations" />
+        <outputRelativeToContentRoot value="true" />
+        <module name="mingrui-lhm-basic-zuul-server" />
+        <module name="mingrui-lhm-service-xxx" />
+        <module name="mingrui-lhm-basics-eureka-server" />
+        <module name="mingrui-lhm-common-core" />
+        <module name="mingrui-lhm-service-api-xxx" />
+      </profile>
+    </annotationProcessing>
+  </component>
+  <component name="JavacSettings">
+    <option name="ADDITIONAL_OPTIONS_OVERRIDE">
+      <module name="mingrui-lhm-basic-zuul-server" options="-parameters" />
+      <module name="mingrui-lhm-basics" options="-parameters" />
+      <module name="mingrui-lhm-basics-eureka-server" options="-parameters" />
+      <module name="mingrui-lhm-commoms" options="-parameters" />
+      <module name="mingrui-lhm-common-core" options="-parameters" />
+      <module name="mingrui-lhm-service" options="-parameters" />
+      <module name="mingrui-lhm-service-api" options="-parameters" />
+      <module name="mingrui-lhm-service-api-xxx" options="-parameters" />
+      <module name="mingrui-lhm-service-xxx" options="-parameters" />
+    </option>
+  </component>
+</project>
