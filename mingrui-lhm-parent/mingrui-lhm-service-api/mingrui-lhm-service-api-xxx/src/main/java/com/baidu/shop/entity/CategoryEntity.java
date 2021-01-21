@@ -32,6 +32,5 @@ public class CategoryEntity {
     private Integer isParent;
 
     @ApiModelProperty(value = "排序",example = "1")
-    @NotEmpty(message = "排序不能空",groups = {MingruiOperation.Add.class})
     private Integer sort;
 }
