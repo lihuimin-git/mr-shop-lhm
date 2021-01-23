@@ -16,6 +16,7 @@
     <modules>
         <module>mingrui-lhm-basics-eureka-server</module>
         <module>mingrui-lhm-basic-zuul-server</module>
+        <module>mingrui-lhm-basic-upload-server</module>
     </modules>
 
 </project>

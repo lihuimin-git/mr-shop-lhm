@@ -1,12 +1,12 @@
 package com.baidu.shop.service.impl;
 
 import com.baidu.shop.base.Result;
+import com.baidu.shop.service.BrandService;
 import com.baidu.shop.dto.BrandDTO;
 import com.baidu.shop.entity.BrandEntity;
 import com.baidu.shop.entity.CategoryBrandEntity;
 import com.baidu.shop.mapper.BrandMapper;
 import com.baidu.shop.mapper.CategoryBrandMapper;
-import com.baidu.shop.service.BrandService;
 import com.baidu.shop.status.BaseApiService;
 import com.baidu.shop.utils.BaiduBeanUtil;
 import com.baidu.shop.utils.PinyinUtil;
@@ -14,9 +14,9 @@ import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
 import com.google.gson.JsonObject;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.util.StreamUtils;
 import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.jsf.FacesContextUtils;
 import tk.mybatis.mapper.entity.Example;
 
 import javax.annotation.Resource;
@@ -62,6 +62,36 @@ public class BrandServiceImpl extends BaseApiService implements BrandService {
         //维护中间表数据
         this.insetrCategoryBrandList(brandDTO.getCategories(),brandEntity.getId());
         return this.setResultSuccess();
+    }
+
+    //品牌修改
+    @Transactional
+    @Override
+    public Result<JsonObject> editBrand(BrandDTO brandDTO) {
+        BrandEntity brandEntity = BaiduBeanUtil.copyProperties(brandDTO, BrandEntity.class);
+        brandEntity.setLetter(PinyinUtil.getUpperCase(String.valueOf(brandEntity.getName().toCharArray()[0]),false).toCharArray()[0]);
+        brandMapper.updateByPrimaryKeySelective(brandEntity);
+        //先通过brandId删除中间表的数据
+        this.deleteCategoryByBrandId(brandEntity.getId());
+
+        this.insetrCategoryBrandList(brandDTO.getCategories(),brandEntity.getId());
+        return this.setResultSuccess();
+    }
+
+    //删除品牌
+    @Transactional
+    @Override
+    public Result<JsonObject> delBrand(Integer id) {
+        brandMapper.deleteByPrimaryKey(id);
+        this.deleteCategoryByBrandId(id);
+        return this.setResultSuccess();
+    }
+
+    //修改删除整合
+    private void deleteCategoryByBrandId(Integer brandId){
+        Example example = new Example(CategoryBrandEntity.class);
+        example.createCriteria().andEqualTo("brandId",brandId);
+        categoryBrandMapper.deleteByExample(example);
     }
     //新增修改整合
     private void insetrCategoryBrandList (String categories,Integer brandId){

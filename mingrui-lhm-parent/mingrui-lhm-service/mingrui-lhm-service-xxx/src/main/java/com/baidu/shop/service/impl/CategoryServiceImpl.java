@@ -2,8 +2,8 @@ package com.baidu.shop.service.impl;
 
 import com.baidu.shop.base.Result;
 import com.baidu.shop.entity.CategoryEntity;
-import com.baidu.shop.mapper.CategoryMapper;
 import com.baidu.shop.service.CategoryService;
+import com.baidu.shop.mapper.CategoryMapper;
 import com.baidu.shop.status.BaseApiService;
 import com.google.gson.JsonObject;
 import org.springframework.transaction.annotation.Transactional;
@@ -77,5 +77,12 @@ public class CategoryServiceImpl extends BaseApiService implements CategoryServi
             return this.setResultSuccess();
         }
         return this.setResultError("id不合理");
+    }
+
+    //通过品牌id查询商品分类
+    @Override
+    public Result<List<CategoryEntity>> getByBrandId(Integer brandId) {
+        List<CategoryEntity> byBrandId = categoryMapper.getByBrandId(brandId);
+        return this.setResultSuccess(byBrandId);
     }
 }

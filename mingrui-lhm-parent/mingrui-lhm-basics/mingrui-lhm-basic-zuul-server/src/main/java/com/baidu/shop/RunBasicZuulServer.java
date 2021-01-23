@@ -1,6 +1,5 @@
-package com.baidu;
+package com.baidu.shop;
 
-import org.apache.commons.lang3.builder.EqualsExclude;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.cloud.netflix.eureka.EnableEurekaClient;
