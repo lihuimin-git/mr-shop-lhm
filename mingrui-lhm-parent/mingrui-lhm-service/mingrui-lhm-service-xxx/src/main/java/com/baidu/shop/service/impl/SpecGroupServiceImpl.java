@@ -3,7 +3,9 @@ package com.baidu.shop.service.impl;
 import com.baidu.shop.base.Result;
 import com.baidu.shop.dto.SpecGroupDTO;
 import com.baidu.shop.entity.SpecGroupEntity;
+import com.baidu.shop.entity.SpecParamEntity;
 import com.baidu.shop.mapper.SpecGroupMapper;
+import com.baidu.shop.mapper.SpecParamMapper;
 import com.baidu.shop.service.SpecGroupService;
 import com.baidu.shop.status.BaseApiService;
 import com.baidu.shop.utils.BaiduBeanUtil;
@@ -20,6 +22,9 @@ import java.util.List;
 public class SpecGroupServiceImpl extends BaseApiService implements SpecGroupService {
     @Resource
     private SpecGroupMapper specGroupMapper;
+
+    @Resource
+    private SpecParamMapper specParamMapper;
 
     //规格组查询
     @Override
@@ -54,6 +59,15 @@ public class SpecGroupServiceImpl extends BaseApiService implements SpecGroupSer
     @Override
     @Transactional
     public Result<JsonObject> delSpecGroupById(Integer id) {
+        //删除规格组之前要先判断一下当前规格组下是否有规格参数
+        //true : 不能被删除
+        //false -->
+        Example example = new Example(SpecParamEntity.class);
+        example.createCriteria().andEqualTo("groupId",id);
+        List<SpecParamEntity> specParamEntities = specParamMapper.selectByExample(example);
+        if (specParamEntities.size()>0){
+            return this.setResultError("当前规格组有规格参数不能删除");
+        }
         specGroupMapper.deleteByPrimaryKey(id);
         return this.setResultSuccess();
     }

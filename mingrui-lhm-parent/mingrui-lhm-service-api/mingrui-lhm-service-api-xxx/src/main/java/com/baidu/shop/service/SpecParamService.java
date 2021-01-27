@@ -6,9 +6,7 @@ import com.baidu.shop.entity.SpecParamEntity;
 import com.google.gson.JsonObject;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
@@ -21,4 +19,12 @@ public interface SpecParamService {
     @ApiOperation(value = "新增规格参数")
     @PostMapping(value = "specParam/save")
     Result<JsonObject> addSpecParam(@RequestBody SpecParamDTO specParamDTO);
+
+    @ApiOperation(value = "修改规格参数")
+    @PutMapping(value = "specParam/save")
+    Result<JsonObject> editSpecParam (@RequestBody SpecParamDTO specParamDTO);
+
+    @ApiOperation(value = "删除规格参数")
+    @DeleteMapping(value = "specParam/delete")
+    Result<JsonObject> delSpecParam(Integer id);
 }

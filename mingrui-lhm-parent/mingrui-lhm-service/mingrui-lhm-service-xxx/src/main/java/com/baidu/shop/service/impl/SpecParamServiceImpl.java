@@ -34,4 +34,20 @@ public class SpecParamServiceImpl extends BaseApiService implements SpecParamSer
         specParamMapper.insertSelective(BaiduBeanUtil.copyProperties(specParamDTO,SpecParamEntity.class));
         return this.setResultSuccess();
     }
+
+    //修改规格参数
+    @Override
+    @Transactional
+    public Result<JsonObject> editSpecParam(SpecParamDTO specParamDTO) {
+        specParamMapper.updateByPrimaryKeySelective(BaiduBeanUtil.copyProperties(specParamDTO,SpecParamEntity.class));
+        return this.setResultSuccess();
+    }
+
+    //删除规格参数
+    @Override
+    @Transactional
+    public Result<JsonObject> delSpecParam(Integer id) {
+        specParamMapper.deleteByPrimaryKey(id);
+        return this.setResultSuccess();
+    }
 }
