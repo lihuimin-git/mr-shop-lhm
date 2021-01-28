@@ -8,9 +8,9 @@ import javax.persistence.Table;
 @Data
 public class SpecGroupEntity {
     @Id
-    private Integer id;
+    private Integer id;//规格组Id
 
-    private Integer cid;
+    private Integer cid;//商品分类id
 
-    private String name;
+    private String name;//规格组的名称
 }

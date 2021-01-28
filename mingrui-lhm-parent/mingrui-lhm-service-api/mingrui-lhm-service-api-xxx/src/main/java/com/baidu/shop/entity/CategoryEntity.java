@@ -17,20 +17,20 @@ public class CategoryEntity {
     @Id
     @ApiModelProperty(value = "分类主键",example = "1")
     @NotNull(message = "ID不能为空",groups = {MingruiOperation.Update.class})
-    private Integer id;
+    private Integer id;//分类Id
 
     @ApiModelProperty(value = "分类名称")
     @NotEmpty(message = "分类名称不能空",groups = {MingruiOperation.Update.class,MingruiOperation.Add.class})
-    private String name;
+    private String name;//分类名称
 
     @ApiModelProperty(value = "父类目录id",example = "1")
     @NotNull(message = "父类目录id不能为空",groups = {MingruiOperation.Update.class})
-    private Integer parentId;
+    private Integer parentId;//父类目录id
 
     @ApiModelProperty(value = "是否是父级节点",example = "1")
     @NotEmpty(message = "是否是父级节点不能空",groups = {MingruiOperation.Add.class})
-    private Integer isParent;
+    private Integer isParent;//是否是父级节点
 
     @ApiModelProperty(value = "排序",example = "1")
-    private Integer sort;
+    private Integer sort;//排序
 }

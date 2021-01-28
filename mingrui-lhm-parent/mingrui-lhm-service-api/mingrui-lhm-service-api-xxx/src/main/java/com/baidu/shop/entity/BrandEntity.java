@@ -12,11 +12,11 @@ import javax.persistence.Table;
 public class BrandEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Integer id;
+    private Integer id;//品牌id
 
-    private String name;
+    private String name;//品牌名称
 
-    private String image;
+    private String image;//品牌图片地址
 
-    private Character letter;
+    private Character letter;//品牌的首字母
 }

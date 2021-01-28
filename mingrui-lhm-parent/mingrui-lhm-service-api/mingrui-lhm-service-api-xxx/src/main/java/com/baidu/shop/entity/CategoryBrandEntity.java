@@ -12,8 +12,8 @@ import javax.persistence.Table;
 @NoArgsConstructor
 @AllArgsConstructor
 public class CategoryBrandEntity {
-    private Integer categoryId;
+    private Integer categoryId;//商品类目id
 
-    private Integer brandId;
+    private Integer brandId;//品牌id
 
 }
