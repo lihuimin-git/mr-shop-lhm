@@ -1,13 +1,11 @@
 package com.baidu.shop.service.impl;
 
 import com.baidu.shop.base.Result;
+import com.baidu.shop.dto.SkuDTO;
 import com.baidu.shop.dto.SpuDTO;
-import com.baidu.shop.entity.BrandEntity;
-import com.baidu.shop.entity.CategoryEntity;
-import com.baidu.shop.entity.SpuEntity;
-import com.baidu.shop.mapper.BrandMapper;
-import com.baidu.shop.mapper.CategoryMapper;
-import com.baidu.shop.mapper.SpuMapper;
+import com.baidu.shop.dto.SpuDetailDTO;
+import com.baidu.shop.entity.*;
+import com.baidu.shop.mapper.*;
 import com.baidu.shop.service.GoodsService;
 import com.baidu.shop.status.BaseApiService;
 import com.baidu.shop.status.HTTPStatus;
@@ -15,13 +13,18 @@ import com.baidu.shop.utils.BaiduBeanUtil;
 import com.baidu.shop.utils.ObjectUtils;
 import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
+import com.google.gson.JsonObject;
 import org.aspectj.weaver.ast.Var;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.RestController;
 import tk.mybatis.mapper.entity.Example;
 
 import javax.annotation.Resource;
+import javax.xml.crypto.Data;
+import java.lang.reflect.Parameter;
 import java.util.Arrays;
+import java.util.Date;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -35,6 +38,16 @@ public class GoodsServiceImpl extends BaseApiService implements GoodsService {
 
     @Resource
     private CategoryMapper categoryMapper;
+
+    @Resource
+    private SpuDetailMapper spuDetailMapper;
+
+    @Resource
+    private SkuMapper skuMapper;
+
+    @Resource
+    private StockMapper stockMapper;
+    //商品查询
     @Override
     public Result<PageInfo<SpuEntity>> getSpuInfo(SpuDTO spuDTO) {
         //分页插件
@@ -51,6 +64,9 @@ public class GoodsServiceImpl extends BaseApiService implements GoodsService {
         //条件查询
         if(!StringUtils.isEmpty(spuDTO.getTitle()))
             criteria.andLike("title","%"+spuDTO.getTitle()+"%");
+
+        //排序
+        if(!StringUtils.isEmpty(spuDTO.getSort()))example.setOrderByClause(spuDTO.getOrder());
 
         List<SpuEntity> spuEntities = spuMapper.selectByExample(example);
 
@@ -76,5 +92,50 @@ public class GoodsServiceImpl extends BaseApiService implements GoodsService {
 
 //        return this.setResultSuccess(spuEntityPageInfo);
         return this.setResult(HTTPStatus.OK,spuEntityPageInfo.getTotal() + "",spuDtoList);
+    }
+
+    //商品新增
+    @Override
+    @Transactional
+    public Result<JsonObject> addGoods(SpuDTO spuDTO) {
+       final Date date = new Date();
+        //新增spu,新增返回主键, 给必要字段赋默认值
+        //转spuEntity
+        SpuEntity spuEntity = BaiduBeanUtil.copyProperties(spuDTO, SpuEntity.class);
+        spuEntity.setSaleable(1);
+        spuEntity.setValid(1);
+        spuEntity.setCreateTime(date);
+        spuEntity.setLastUpdateTime(date);
+        spuMapper.insertSelective(spuEntity);
+
+        //新增spuDetail
+        //从spuDto中获取SpuDetail
+        SpuDetailDTO spuDetail = spuDTO.getSpuDetail();
+        SpuDetailEntity spuDetailEntity = BaiduBeanUtil.copyProperties(spuDetail, SpuDetailEntity.class);
+        spuDetailEntity.setSpuId(spuEntity.getId());
+        spuDetailMapper.insertSelective(spuDetailEntity);
+
+        //新增sku
+        //从spuDto中获取sku
+        this.saveSkuAndStockInfo(spuDTO,spuEntity.getId(),date);
+        return this.setResultSuccess();
+    }
+
+
+    private void saveSkuAndStockInfo(SpuDTO spuDTO, Integer spuId, Date date){
+        List<SkuDTO> skus = spuDTO.getSkus();
+        skus.stream().forEach(skuDTO -> {
+            SkuEntity skuEntity = BaiduBeanUtil.copyProperties(skuDTO, SkuEntity.class);
+            skuEntity.setSpuId(spuId);
+            skuEntity.setCreateTime(date);
+            skuEntity.setLastUpdateTime(date);
+            skuMapper.insertSelective(skuEntity);
+
+            //新增stcok
+            StockEntity stockEntity = new StockEntity();
+            stockEntity.setSkuId(skuEntity.getId());
+            stockEntity.setStock(skuDTO.getStock());
+            stockMapper.insertSelective(stockEntity);
+        });
     }
 }

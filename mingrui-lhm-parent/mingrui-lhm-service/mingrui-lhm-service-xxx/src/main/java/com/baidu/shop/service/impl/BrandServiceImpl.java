@@ -117,4 +117,11 @@ public class BrandServiceImpl extends BaseApiService implements BrandService {
             categoryBrandMapper.insertSelective(categoryBrandEntity);
         }
     }
+
+    //通过分类id获取品牌
+    @Override
+    public Result<List<BrandEntity>> getBrandInfoByCategoryById(Integer cid) {
+        List<BrandEntity> brandInfoByCategoryById = brandMapper.getBrandInfoByCategoryById(cid);
+        return this.setResultSuccess(brandInfoByCategoryById);
+    }
 }

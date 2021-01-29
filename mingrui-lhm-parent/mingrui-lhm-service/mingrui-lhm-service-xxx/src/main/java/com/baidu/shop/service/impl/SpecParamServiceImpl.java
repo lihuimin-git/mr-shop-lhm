@@ -7,6 +7,7 @@ import com.baidu.shop.mapper.SpecParamMapper;
 import com.baidu.shop.service.SpecParamService;
 import com.baidu.shop.status.BaseApiService;
 import com.baidu.shop.utils.BaiduBeanUtil;
+import com.baidu.shop.utils.ObjectUtils;
 import com.google.gson.JsonObject;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.RestController;
@@ -22,8 +23,14 @@ public class SpecParamServiceImpl extends BaseApiService implements SpecParamSer
     //查询规格参数
     @Override
     public Result<List<SpecParamEntity>> getSpecParamInfo(SpecParamDTO specParamDTO) {
+        SpecParamEntity specParamEntity = BaiduBeanUtil.copyProperties(specParamDTO, SpecParamEntity.class);
         Example example = new Example(SpecParamEntity.class);
-        example.createCriteria().andEqualTo("groupId",specParamDTO.getGroupId());
+
+//        example.createCriteria().andEqualTo("groupId",specParamDTO.getGroupId());
+        Example.Criteria criteria = example.createCriteria();
+        if (ObjectUtils.isNotNull(specParamEntity.getGroupId()))criteria.andEqualTo("groupId",specParamEntity.getGroupId());
+
+        if (ObjectUtils.isNotNull(specParamEntity.getCid()))criteria.andEqualTo("cid",specParamEntity.getCid());
         List<SpecParamEntity> specParamEntities = specParamMapper.selectByExample(example);
         return this.setResultSuccess(specParamEntities);
     }
