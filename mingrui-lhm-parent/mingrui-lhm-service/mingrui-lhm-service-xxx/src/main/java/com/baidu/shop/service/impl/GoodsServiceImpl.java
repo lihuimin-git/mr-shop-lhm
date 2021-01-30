@@ -121,7 +121,56 @@ public class GoodsServiceImpl extends BaseApiService implements GoodsService {
         return this.setResultSuccess();
     }
 
+    //修改商品信息
+    @Override
+    public Result<JsonObject> editGoods(SpuDTO spuDTO) {
+        //修改spu
+        Date date = new Date();
+        SpuEntity spuEntity = BaiduBeanUtil.copyProperties(spuDTO, SpuEntity.class);
+        spuEntity.setLastUpdateTime(date);
+        spuMapper.updateByPrimaryKeySelective(spuEntity);
 
+        //修改SpuDetail
+        spuDetailMapper.updateByPrimaryKeySelective(BaiduBeanUtil.copyProperties(spuDTO.getSpuDetail(),SpuDetailEntity.class));
+
+        //修改sku
+        //先通过spuid删除sku
+        //然后新增数据
+        this.delSkuAndStrock(spuEntity.getId());
+
+
+        //修改stock
+        //删除stock
+        //但是sku在上面已经被删除掉了
+        //所以应该先查询出被删除的skuid
+        //新增stock
+        this.saveSkuAndStockInfo(spuDTO,spuEntity.getId(),date);
+        return this.setResultSuccess();
+    }
+
+    //通过spuId查询SpuDetail信息
+    @Override
+    public Result<SpuDetailEntity> getSpuDetailBySpuId(Integer spuId) {
+        SpuDetailEntity spuDetailEntity = spuDetailMapper.selectByPrimaryKey(spuId);
+        return this.setResultSuccess(spuDetailEntity);
+    }
+
+    //通过spuId查询sku信息
+    @Override
+    public Result<List<SpuDTO>> getSkuById(Integer spuId) {
+        List<SkuDTO> skusAndStockBySpuId = skuMapper.getSkusAndStockBySpuId(spuId);
+        return this.setResultSuccess(skusAndStockBySpuId);
+    }
+    //修改和删除整合
+    private void delSkuAndStrock(Integer spuId){
+        Example example = new Example(SkuEntity.class);
+        example.createCriteria().andEqualTo("spuId",spuId);
+        List<SkuEntity> skuEntities = skuMapper.selectByExample(example);
+        List<Long> skucollect = skuEntities.stream().map(sku -> sku.getId()).collect(Collectors.toList());
+        skuMapper.deleteByIdList(skucollect);
+    }
+
+    //修改和新增的整合（sku增加）
     private void saveSkuAndStockInfo(SpuDTO spuDTO, Integer spuId, Date date){
         List<SkuDTO> skus = spuDTO.getSkus();
         skus.stream().forEach(skuDTO -> {
