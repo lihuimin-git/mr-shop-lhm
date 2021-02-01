@@ -148,6 +148,20 @@ public class GoodsServiceImpl extends BaseApiService implements GoodsService {
         return this.setResultSuccess();
     }
 
+    //删除商品
+    @Transactional
+    @Override
+    public Result<JsonObject> delGoods(Integer spuId) {
+        //删除spu
+        spuMapper.deleteByPrimaryKey(spuId);
+        //刪除sspuDetail
+        spuDetailMapper.deleteByPrimaryKey(spuId);
+
+        //先通过spuId删除sku
+        this.delSkuAndStrock(spuId);
+        return this.setResultSuccess();
+    }
+
     //通过spuId查询SpuDetail信息
     @Override
     public Result<SpuDetailEntity> getSpuDetailBySpuId(Integer spuId) {
